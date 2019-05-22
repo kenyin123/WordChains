@@ -18,9 +18,15 @@
     <ClCompile Include="WordList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="WordGraph.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cxxopts.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WordGraph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

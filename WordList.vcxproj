@@ -151,10 +151,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="WordGraph.cpp" />
     <ClCompile Include="WordList.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cxxopts.hpp" />
+    <ClInclude Include="WordGraph.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

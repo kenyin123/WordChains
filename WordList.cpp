@@ -4,38 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include "cxxopts.hpp"
-
-struct WordListOptions
-{
-    bool countWord;
-    bool allowLoop;
-    char headChar;
-    char tailChar;
-    std::string fileName;
-
-    WordListOptions()
-    {
-        countWord = true;
-        allowLoop = false;
-        headChar = '*';
-        tailChar = '*';
-        fileName = "";
-    }
-
-    void dump()
-    {
-        std::cout << "Count by " << (countWord ? "words" : "characters") << std::endl;
-        if (headChar != '*')
-        {
-            std::cout << "Head char: " << headChar << std::endl;
-        }
-        if (tailChar != '*')
-        {
-            std::cout << "Tail char: " << tailChar << std::endl;
-        }
-        std::cout << "File name: " << fileName << std::endl;
-    }
-};
+#include "WordGraph.h"
 
 bool getOptions(int argc, char *argv[], WordListOptions& wlOption)
 {
@@ -73,58 +42,6 @@ bool getOptions(int argc, char *argv[], WordListOptions& wlOption)
     return true;
 }
 
-void go(const WordListOptions& option)
-{
-    std::ifstream filein(option.fileName);
-    std::vector<std::string> words;
-    if (!filein.fail())
-    {
-        for (std::string line; std::getline(filein, line); )
-        {
-            int pos = 0;
-            bool expectBegin = true;
-            int beginPos;
-            while (pos < line.length())
-            {
-                if (std::isalpha(line[pos]))
-                {
-                    if (expectBegin)
-                    {
-                        beginPos = pos;
-                        expectBegin = false;
-                    }
-                }
-                else
-                {
-                    if (!expectBegin)
-                    {
-                        std::string word = line.substr(beginPos, pos - beginPos);
-                        std::transform(word.begin(), word.end(), word.begin(), ::tolower);
-                        words.push_back(word);
-                        expectBegin = true;
-                    }
-                }
-                pos++;
-            }
-            if (!expectBegin)
-            {
-                std::string word = line.substr(beginPos, pos - beginPos);
-                std::transform(word.begin(), word.end(), word.begin(), ::tolower);
-                words.push_back(word);
-            }
-            std::cout << line << std::endl;
-        }
-        for (auto word: words)
-        {
-            std::cout << word << std::endl;
-        }
-    }
-    else
-    {
-        std::cout << "Failed to open " << option.fileName << std::endl;
-    }
-}
-
 int main(int argc, char *argv[])
 {
     WordListOptions wlOption;
@@ -135,6 +52,9 @@ int main(int argc, char *argv[])
         return -1;
     }
 
+    std::cout << "---------------------------- Options ----------------------------" << std::endl;
     wlOption.dump();
-    go(wlOption);
+    std::cout << "-----------------------------------------------------------------" << std::endl;
+    WordGraph wg;
+    wg.go(wlOption);
 }
