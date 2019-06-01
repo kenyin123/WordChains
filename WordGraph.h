@@ -33,10 +33,10 @@ private:
     std::unordered_set<std::string> _sources;
     WordListOptions _options;
     int _maxLen;
-    std::vector<std::string> _maxPath;
+    std::vector<std::vector<std::string>> _maxPaths;
 
     void addWord(const std::string& word);
-    bool search(std::vector<std::string> &result);
+    bool search(std::vector<std::vector<std::string>> &result);
     void searchWorker(std::vector<std::string> &path, int c_word, int c_char);
 
 public:

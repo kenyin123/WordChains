@@ -65,10 +65,13 @@ void WordGraph::go(const WordListOptions& op)
             //std::cout << line << std::endl;
         }
 
-        std::vector<std::string> result;
+        std::vector<std::vector<std::string>> result;
         if (search(result))
         {
-            std::cout << "Result: " << result << std::endl;
+            for (auto v : result)
+            {
+                std::cout << "Result: " << v << std::endl;
+            }
         }
     }
     else
@@ -77,10 +80,11 @@ void WordGraph::go(const WordListOptions& op)
     }
 }
 
-bool WordGraph::search(std::vector<std::string>& result)
+bool WordGraph::search(std::vector<std::vector<std::string>>& result)
 {
     _sources.clear();
     _maxLen = 0;
+    _maxPaths.clear();
     for (auto w : _words)
     {
         if (_options.headChar == '*' || _options.headChar == w[0])
@@ -89,66 +93,87 @@ bool WordGraph::search(std::vector<std::string>& result)
         }
     }
 
-    while (!_sources.empty())
+    try
     {
-        std::vector<std::string> path = { *_sources.begin() };
-        _sources.erase(path[0]);
-        searchWorker(path, 1, path[0].length());
+        while (!_sources.empty())
+        {
+            std::vector<std::string> path = { *_sources.begin() };
+            _sources.erase(path[0]);
+            searchWorker(path, 1, path[0].length());
+        }
     }
+    catch (const std::logic_error& le)
+    {
+        std::cout << le.what() << std::endl;
+        return false;
+    }
+
     if (_maxLen > 0)
     {
-        result = _maxPath;
+        result = _maxPaths;
     }
     return (_maxLen > 0);
 }
 
 void WordGraph::searchWorker(std::vector<std::string> &path, int c_word, int c_char)
 {
-    char currentTail = path[c_word - 1].back();
-    if (c_word > 1 && (_options.tailChar == '*' || _options.tailChar == currentTail))
+    if (path.size() > c_word)
     {
-        std::vector<std::string> vt(path.begin(), path.begin() + c_word);
-        std::cout << "Found a solution: " << vt << std::endl;
+        path.resize(c_word);
+    }
+    const std::string& tailWord = path.back();
+    const char tailChar = tailWord.back();
+    //Check if there's a loop
+    if (c_word > 1)
+    {
+        auto it = std::find_if(path.begin(), path.end(), [&](const std::string &w) {
+            return (tailChar == w[0] && tailWord != w);
+            });
+        if (it != path.end() && !_options.allowLoop)
+        {
+            throw std::logic_error("find a loop.");
+        }
+    }
+
+    //Check if this is a valid result
+    if (c_word > 1 && (_options.tailChar == '*' || _options.tailChar == tailChar))
+    {
+        std::cout << "----> " << path << std::endl;
+        
         // Found a valid list
         int len = _options.countWord ? c_word : c_char;
         if (len > _maxLen)
         {
             _maxLen = len;
-            _maxPath = path;
+            _maxPaths.clear();
+            _maxPaths.push_back(path);
+        }
+        else if (len == _maxLen)
+        {
+            _maxPaths.push_back(path);
         }
     }
 
-    if (_connections.count(currentTail))
+    if (_connections.count(tailChar))
     {
-        const std::vector<std::string>& nextWords = _connections[currentTail];
+        const std::vector<std::string>& nextWords = _connections[tailChar];
         for (auto word : nextWords)
         {
-            bool foundLoop = false;
-            for (int i = 0; i < c_word; i++)
+            if (std::find(path.begin(), path.end(), word) != path.end())
             {
-                if (path[i] == word)
-                {
-                    std::vector<std::string> vt(path.begin(), path.begin() + c_word);
-                    std::cout << "find a loop: " << vt << " nextword = " << word << std::endl;
-                    foundLoop = true;
-                    break;
-                }
+                continue;
             }
-            if (foundLoop) continue;
 
             if (_sources.count(word))
             {
                 _sources.erase(word);
             }
 
-            if (c_word < path.size())
+            if (path.size() > c_word)
             {
-                path[c_word] = word;
+                path.resize(c_word);
             }
-            else
-            {
-                path.push_back(word);
-            }
+            path.push_back(word);
             searchWorker(path, c_word + 1, c_char + word.length());
         }
     }
@@ -184,9 +209,15 @@ void WordGraph::dumpWords()
 
 std::ostream& operator<<(std::ostream& out, const std::vector<std::string>& val)
 {
-    for (auto s : val)
+    out << "[";
+    for (int i = 0; i < val.size(); i++)
     {
-        out << s << ", ";
+        out << val[i];
+        if (i != val.size() - 1)
+        {
+            out << ", ";
+        }
     }
+    out << "]";
     return out;
 }
