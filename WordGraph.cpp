@@ -19,22 +19,42 @@ void WordListOptions::dump()
     std::cout << "File name: " << fileName << std::endl;
 }
 
-
-void WordGraph::go(const WordListOptions& op)
+//static function
+int Core::gen_chain_word(char* words[], int len, char* result[], char head, char tail, bool enable_loop)
 {
-    _options = op;
-    std::ifstream filein(_options.fileName);
+    Core core;
+    std::vector<std::string> vWords;
+    for (int i = 0; i < len; i++)
+    {
+        vWords.push_back(words[i]);
+    }
+    
+    WordListOptions options;
+    options.headChar = (head == 0) ? '*' : head;
+    options.tailChar = (tail == 0) ? '*' : tail;
+    options.allowLoop = enable_loop;
 
+    auto res = core.go(vWords, options);
+    for (int i = 0; i < (int)res.size(); i++)
+    {
+        result[i] = const_cast<char *>(res[i].c_str());
+    }
+    return res.size();
+}
+
+std::vector<std::string> Core::read_file(const std::string& file_name)
+{
+    std::ifstream filein(file_name);
+
+    std::vector<std::string> res;
     if (!filein.fail())
     {
-        _words.clear();
-        _connections.clear();
         for (std::string line; std::getline(filein, line); )
         {
             int pos = 0;
             bool expectBegin = true;
             int beginPos;
-            while (pos < line.length())
+            while (pos < (int)line.length())
             {
                 if (std::isalpha(line[pos]))
                 {
@@ -50,7 +70,7 @@ void WordGraph::go(const WordListOptions& op)
                     {
                         std::string word = line.substr(beginPos, pos - beginPos);
                         std::transform(word.begin(), word.end(), word.begin(), ::tolower);
-                        addWord(word);
+                        res.push_back(word);
                         expectBegin = true;
                     }
                 }
@@ -60,31 +80,38 @@ void WordGraph::go(const WordListOptions& op)
             {
                 std::string word = line.substr(beginPos, pos - beginPos);
                 std::transform(word.begin(), word.end(), word.begin(), ::tolower);
-                addWord(word);
-            }
-            //std::cout << line << std::endl;
-        }
-
-        std::vector<std::vector<std::string>> result;
-        if (search(result))
-        {
-            for (auto v : result)
-            {
-                std::cout << "Result: " << v << std::endl;
+                res.push_back(word);
             }
         }
     }
     else
     {
-        std::cout << "Failed to open " << _options.fileName << std::endl;
+        std::cout << "Failed to open " << file_name << std::endl;
     }
+    return res;
 }
 
-bool WordGraph::search(std::vector<std::vector<std::string>>& result)
+
+std::vector<std::string> Core::go(const std::vector<std::string> &words, const WordListOptions& op)
+{
+    _options = op;
+    for (auto word : words)
+    {
+        addWord(word);
+    }
+
+    std::vector<std::string> result;
+    if (search(result))
+    {
+        std::cout << "Result: " << result << std::endl;
+    }
+    return result;
+}
+
+bool Core::search(std::vector<std::string>& result)
 {
     _sources.clear();
     _maxLen = 0;
-    _maxPaths.clear();
     for (auto w : _words)
     {
         if (_options.headChar == '*' || _options.headChar == w[0])
@@ -110,14 +137,14 @@ bool WordGraph::search(std::vector<std::vector<std::string>>& result)
 
     if (_maxLen > 0)
     {
-        result = _maxPaths;
+        result = _maxPath;
     }
     return (_maxLen > 0);
 }
 
-void WordGraph::searchWorker(std::vector<std::string> &path, int c_word, int c_char)
+void Core::searchWorker(std::vector<std::string> &path, int c_word, int c_char)
 {
-    if (path.size() > c_word)
+    if ((int)path.size() > c_word)
     {
         path.resize(c_word);
     }
@@ -145,12 +172,7 @@ void WordGraph::searchWorker(std::vector<std::string> &path, int c_word, int c_c
         if (len > _maxLen)
         {
             _maxLen = len;
-            _maxPaths.clear();
-            _maxPaths.push_back(path);
-        }
-        else if (len == _maxLen)
-        {
-            _maxPaths.push_back(path);
+            _maxPath = path;
         }
     }
 
@@ -169,7 +191,7 @@ void WordGraph::searchWorker(std::vector<std::string> &path, int c_word, int c_c
                 _sources.erase(word);
             }
 
-            if (path.size() > c_word)
+            if ((int)path.size() > c_word)
             {
                 path.resize(c_word);
             }
@@ -179,7 +201,7 @@ void WordGraph::searchWorker(std::vector<std::string> &path, int c_word, int c_c
     }
 }
 
-void WordGraph::addWord(const std::string& word)
+void Core::addWord(const std::string& word)
 {
     _words.push_back(word);
     if (_connections.count(word[0]))
@@ -192,7 +214,7 @@ void WordGraph::addWord(const std::string& word)
     }
 }
 
-void WordGraph::dumpWords()
+void Core::dumpWords()
 {
     std::cout << "Dump the list of words" << std::endl;
     for (auto word : _words)
@@ -210,7 +232,7 @@ void WordGraph::dumpWords()
 std::ostream& operator<<(std::ostream& out, const std::vector<std::string>& val)
 {
     out << "[";
-    for (int i = 0; i < val.size(); i++)
+    for (int i = 0; i < (int)val.size(); i++)
     {
         out << val[i];
         if (i != val.size() - 1)

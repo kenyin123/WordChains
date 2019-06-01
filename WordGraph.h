@@ -25,7 +25,7 @@ struct WordListOptions
     void dump();
 };
 
-class WordGraph
+class Core
 {
 private:
     std::vector<std::string> _words;
@@ -33,18 +33,21 @@ private:
     std::unordered_set<std::string> _sources;
     WordListOptions _options;
     int _maxLen;
-    std::vector<std::vector<std::string>> _maxPaths;
+    std::vector<std::string> _maxPath;
 
     void addWord(const std::string& word);
-    bool search(std::vector<std::vector<std::string>> &result);
+    bool search(std::vector<std::string> &result);
     void searchWorker(std::vector<std::string> &path, int c_word, int c_char);
+    Core() : _maxLen(0) {}
 
 public:
-    WordGraph() : _maxLen(0) {}
-    ~WordGraph() {}
+    ~Core() {}
 
-    void go(const WordListOptions& op);
+    std::vector<std::string> go(const std::vector<std::string>& words, const WordListOptions& op);
     void dumpWords();
+    
+    static int gen_chain_word(char* words[], int len, char* result[], char head, char tail, bool enable_loop);
+    static std::vector<std::string> read_file(const std::string& file_name);
 };
 
 std::ostream& operator<<(std::ostream& out, const std::vector<std::string>& val);

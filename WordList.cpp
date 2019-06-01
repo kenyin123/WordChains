@@ -55,6 +55,17 @@ int main(int argc, char *argv[])
     std::cout << "---------------------------- Options ----------------------------" << std::endl;
     wlOption.dump();
     std::cout << "-----------------------------------------------------------------" << std::endl;
-    WordGraph wg;
-    wg.go(wlOption);
+
+    std::vector<std::string> vWords = Core::read_file(wlOption.fileName);
+    char** words = new char* [vWords.size()]{ 0 };
+    char** result = new char* [vWords.size()]{ 0 };
+    for (int i = 0; i < (int)vWords.size(); i++)
+    {
+        words[i] = const_cast<char *>(vWords[i].c_str());
+    }
+    char head = wlOption.headChar == '*' ? 0 : wlOption.headChar;
+    char tail = wlOption.tailChar == '*' ? 0 : wlOption.tailChar;
+    Core::gen_chain_word(words, vWords.size(), result, head, tail, wlOption.allowLoop);
+    delete[] words;
+    delete[] result;
 }
