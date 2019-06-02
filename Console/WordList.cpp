@@ -67,8 +67,8 @@ int main(int argc, char *argv[])
 		}
 		char head = wlOption.headChar == '*' ? 0 : wlOption.headChar;
 		char tail = wlOption.tailChar == '*' ? 0 : wlOption.tailChar;
-		Core::gen_chain_word(words, vWords.size(), result, head, tail, wlOption.allowLoop);
-		Core::gen_chain_char(words, vWords.size(), result, head, tail, wlOption.allowLoop);
+		if(wlOption.countWord ==true)Core::gen_chain_word(words, vWords.size(), result, head, tail, wlOption.allowLoop);
+		else Core::gen_chain_char(words, vWords.size(), result, head, tail, wlOption.allowLoop);
 		delete[] words;
 		delete[] result;
 	}
