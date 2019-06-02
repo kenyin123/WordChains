@@ -13,7 +13,9 @@ int Core::gen_chain_word(char* words[], int len, char* result[], char head, char
 	std::vector<std::string> vWords;
 	for (int i = 0; i < len; i++)
 	{
-		vWords.push_back(words[i]);
+		std::string temp = words[i];
+		std::transform(temp.begin(), temp.end(), temp.begin(), ::tolower);
+		vWords.push_back(temp);
 	}
 
 	WordListOptions options;
@@ -34,7 +36,9 @@ int Core::gen_chain_char(char* words[], int len, char* result[], char head, char
 	std::vector<std::string> vWords;
 	for (int i = 0; i < len; i++)
 	{
-		vWords.push_back(words[i]);
+		std::string temp = words[i];
+		std::transform(temp.begin(), temp.end(), temp.begin(), ::tolower);
+		vWords.push_back(temp);
 	}
 
 	WordListOptions options;
