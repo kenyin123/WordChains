@@ -1,3 +1,1 @@
-﻿  WordList.cpp
-d:\study\code\se\wordchains\wordchains\console\cxxopts.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
-  Console.vcxproj -> D:\study\code\SE\wordchains\WordChains\Debug\Console.exe
+﻿  Console.vcxproj -> D:\study\code\SE\wordlist\WordList_0526_2\Debug\Console.exe

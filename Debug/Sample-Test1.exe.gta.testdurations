@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GtaTestDurations xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Executable>D:\study\code\SE\wordlist\WordList_0526_2\Debug\Sample-Test1.exe</Executable>
+  <TestDurations>
+    <TestDuration Test="TestCaseName.TestName1" Duration="1" />
+    <TestDuration Test="TestCaseName.TestName2" Duration="1" />
+    <TestDuration Test="TestCaseName.TestName3" Duration="1" />
+    <TestDuration Test="TestCaseName.TestName4" Duration="1" />
+    <TestDuration Test="TestCaseName.TestName5" Duration="0" />
+  </TestDurations>
+</GtaTestDurations>
