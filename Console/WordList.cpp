@@ -44,6 +44,7 @@ bool getOptions(int argc, char *argv[], WordListOptions& wlOption)
 
 int main(int argc, char *argv[])
 {
+	int resultSize;
 	WordListOptions wlOption;
 	if (!getOptions(argc, argv, wlOption))
 	{
@@ -67,7 +68,7 @@ int main(int argc, char *argv[])
 		}
 		char head = wlOption.headChar == '*' ? 0 : wlOption.headChar;
 		char tail = wlOption.tailChar == '*' ? 0 : wlOption.tailChar;
-		if(wlOption.countWord ==true)Core::gen_chain_word(words, vWords.size(), result, head, tail, wlOption.allowLoop);
+		if (wlOption.countWord == true)Core::gen_chain_word(words, vWords.size(), result, head, tail, wlOption.allowLoop);
 		else Core::gen_chain_char(words, vWords.size(), result, head, tail, wlOption.allowLoop);
 		delete[] words;
 		delete[] result;

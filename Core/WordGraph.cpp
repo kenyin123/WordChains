@@ -5,7 +5,7 @@
 #include <fstream>
 #include <cctype>
 #include <stdexcept>
-
+FILE *fp = fopen("solution.txt", "w");
 //static function
 int Core::gen_chain_word(char* words[], int len, char* result[], char head, char tail, bool enable_loop)
 {
@@ -27,6 +27,11 @@ int Core::gen_chain_word(char* words[], int len, char* result[], char head, char
 	for (int i = 0; i < (int)res.size(); i++)
 	{
 		result[i] = const_cast<char *>(res[i].c_str());
+	}
+	for (int i = 0; i < (int)res.size(); i++)
+	{
+		fprintf(fp,result[i]);
+		fprintf(fp, "\n");
 	}
 	return res.size();
 }
@@ -51,6 +56,12 @@ int Core::gen_chain_char(char* words[], int len, char* result[], char head, char
 	for (int i = 0; i < (int)res.size(); i++)
 	{
 		result[i] = const_cast<char *>(res[i].c_str());
+		
+	}
+	for (int i = 0; i < (int)res.size(); i++)
+	{
+		fprintf(fp, result[i]);
+		fprintf(fp, "\n");
 	}
 	return res.size();
 }
@@ -116,6 +127,7 @@ std::vector<std::string> Core::go(const std::vector<std::string> &words, const W
 	std::vector<std::string> result;
 	if (search(result))
 	{
+		
 		std::cout << "Result: " << result << std::endl;
 	}
 	return result;
@@ -178,8 +190,9 @@ void Core::searchWorker(std::vector<std::string> &path, int c_word, int c_char)
 	//Check if this is a valid result
 	if (c_word > 1 && (_options.tailChar == '*' || _options.tailChar == tailChar))
 	{
+		
 		std::cout << "----> " << path << std::endl;
-
+		
 		// Found a valid list
 		int len = _options.countWord ? c_word : c_char;
 		if (len > _maxLen)
