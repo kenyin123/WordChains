@@ -33,6 +33,7 @@ int Core::gen_chain_word(char* words[], int len, char* result[], char head, char
 		fprintf(fp,result[i]);
 		fprintf(fp, "\n");
 	}
+	fclose(fp);
 	return res.size();
 }
 int Core::gen_chain_char(char* words[], int len, char* result[], char head, char tail, bool enable_loop)
@@ -63,6 +64,7 @@ int Core::gen_chain_char(char* words[], int len, char* result[], char head, char
 		fprintf(fp, result[i]);
 		fprintf(fp, "\n");
 	}
+	fclose(fp);
 	return res.size();
 }
 
